@@ -7,9 +7,21 @@ import { Spinner } from "@chakra-ui/react";
 import RefreshIcon from "@/assets/icons/RefreshIcon";
 import DownloadIcon from "@/assets/icons/DownloadIcon";
 import TagItem from "@/components/shared/TagItem";
+import { useToPng } from "@hugocxl/react-to-image";
 
 export default function Home() {
-  const [tag, setTag] = useState<string>("love");
+  const [_, convert, ref] = useToPng<HTMLDivElement>({
+    quality: 0.8,
+    selector: ".quote-container",
+    onSuccess: (data) => {
+      const link = document.createElement("a");
+      link.href = data;
+      link.download = "quote.png";
+      link.click();
+    },
+  });
+
+  const [tag, setTag] = useState<string>("life");
 
   const tags = [
     "life",
@@ -46,7 +58,7 @@ export default function Home() {
 
   return (
     <MainLayout>
-      <Text fontSize="4xl" textAlign="center" fontWeight="bold">
+      <Text fontSize="3xl" textAlign="center" fontWeight="bold">
         Random Quote Gen 💬
       </Text>
 
@@ -64,6 +76,7 @@ export default function Home() {
           position="relative"
           shadow="md"
           borderRadius="md"
+          className="quote-container"
         >
           <Image
             src={imgURL as string}
@@ -79,7 +92,10 @@ export default function Home() {
             top="50%"
             left="50%"
             transform="translate(-50%, -50%)"
-            fontSize="xl"
+            fontSize={{
+              base: "lg",
+              md: "xl",
+            }}
             color="white"
           >
             {quote?.content}
@@ -89,7 +105,10 @@ export default function Home() {
             position="absolute"
             bottom="4"
             right="4"
-            fontSize="xl"
+            fontSize={{
+              base: "sm",
+              md: "md",
+            }}
             color="white"
           >
             - {quote?.author}
@@ -112,7 +131,7 @@ export default function Home() {
                 strokeWidth="4"
               />
             </Box>
-            <Box onClick={handleRefresh} cursor="pointer">
+            <Box onClick={convert} cursor="pointer">
               <DownloadIcon
                 width="40"
                 height="40"
